@@ -1,0 +1,38 @@
+name: Product Hunt Daily Sync
+
+on:
+  schedule:
+    # UTC 01:00 = 北京时间 09:00
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+
+      - name: 设置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      - name: 执行抓取与推送
+        run: python main.py
+        env:
+          PH_TOKEN: ${{ secrets.PH_TOKEN }}
+          LARK_APP_ID: ${{ secrets.LARK_APP_ID }}
+          LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
+          LARK_CHAT_ID: ${{ secrets.LARK_CHAT_ID }}
+
+      - name: 提交数据
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/
+          git commit -m "daily: $(date +%Y-%m-%d)" || exit 0
+          git push
