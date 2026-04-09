@@ -1,4 +1,3 @@
-import base64
 import json
 import logging
 from typing import List
@@ -81,9 +80,8 @@ def send_card(token: str, chat_id: str, top3: List[Product], date_str: str, doc_
     url = f"{IM_URL}?receive_id_type=chat_id"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     card = _build_card(top3, date_str, doc_url)
-    receive_id = base64.b64encode(chat_id.encode("utf-8")).decode("utf-8")
     payload = {
-        "receive_id": receive_id,
+        "receive_id": chat_id,
         "msg_type": "interactive",
         "content": json.dumps({"card": card}),
     }
