@@ -1,9 +1,10 @@
 import os
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Config(BaseSettings):
+    model_config = SettingsConfigDict(populate_by_name=True)
     ph_token: str = Field(alias="PH_TOKEN")
     lark_app_id: str = Field(alias="LARK_APP_ID")
     lark_app_secret: str = Field(alias="LARK_APP_SECRET")
