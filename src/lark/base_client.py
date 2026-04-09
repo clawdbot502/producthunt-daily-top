@@ -10,21 +10,22 @@ BASE_URL = "https://open.feishu.cn/open-apis/bitable/v1/apps"
 
 
 def _product_to_record(product: Product, date_ms: int) -> Dict[str, Any]:
-    return {
-        "fields": {
-            "日期": date_ms,
-            "排名": product.rank,
-            "产品名称": product.name,
-            "标语": product.tagline,
-            "AI 摘要": product.ai_summary,
-            "投票数": product.votes,
-            "评论数": product.comments,
-            "话题标签": product.topics,
-            "PH 链接": {"text": product.url, "link": product.url},
-            "官网链接": {"text": product.website, "link": product.website} if product.website else "",
-            "缩略图": {"text": product.thumbnail, "link": product.thumbnail} if product.thumbnail else "",
-        }
+    fields = {
+        "日期": date_ms,
+        "排名": product.rank,
+        "产品名称": product.name,
+        "标语": product.tagline,
+        "AI 摘要": product.ai_summary,
+        "投票数": product.votes,
+        "评论数": product.comments,
+        "话题标签": product.topics,
+        "PH 链接": {"text": product.url, "link": product.url},
     }
+    if product.website:
+        fields["官网链接"] = {"text": product.website, "link": product.website}
+    if product.thumbnail:
+        fields["缩略图"] = {"text": product.thumbnail, "link": product.thumbnail}
+    return {"fields": fields}
 
 
 def batch_create_records(

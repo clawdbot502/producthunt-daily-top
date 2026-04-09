@@ -1,9 +1,12 @@
+import logging
 import requests
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from typing import List
 
 from src.models import Product
+
+logger = logging.getLogger(__name__)
 
 GRAPHQL_URL = "https://api.producthunt.com/v2/api/graphql"
 
@@ -76,6 +79,9 @@ def fetch_top_products(ph_token: str, limit: int = 10) -> List[Product]:
     resp = requests.post(GRAPHQL_URL, headers=headers, json=payload, timeout=60)
     resp.raise_for_status()
     data = resp.json()
+
+    if data.get("errors"):
+        logger.error("Product Hunt GraphQL errors: %s", data["errors"])
 
     edges = data.get("data", {}).get("posts", {}).get("edges", [])
     products: List[Product] = []
