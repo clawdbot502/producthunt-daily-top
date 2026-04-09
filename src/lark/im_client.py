@@ -51,19 +51,20 @@ def _build_card(top3: List[Product], date_str: str, doc_url: str) -> dict:
         )
         elements.append({"tag": "hr"})
 
-    elements.append(
-        {
-            "tag": "action",
-            "actions": [
-                {
-                    "tag": "button",
-                    "text": {"tag": "plain_text", "content": "📄 查看完整报告"},
-                    "url": doc_url,
-                    "type": "default",
-                }
-            ],
-        }
-    )
+    if doc_url:
+        elements.append(
+            {
+                "tag": "action",
+                "actions": [
+                    {
+                        "tag": "button",
+                        "text": {"tag": "plain_text", "content": "📄 查看完整报告"},
+                        "url": doc_url,
+                        "type": "default",
+                    }
+                ],
+            }
+        )
 
     return {
         "config": {"wide_screen_mode": True},
