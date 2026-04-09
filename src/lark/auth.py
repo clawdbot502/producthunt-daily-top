@@ -1,6 +1,6 @@
 import requests
 
-AUTH_URL = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
+AUTH_URL = "https://open.larksuite.com/open-apis/auth/v3/tenant_access_token/internal"
 
 
 def get_tenant_token(app_id: str, app_secret: str) -> str:
