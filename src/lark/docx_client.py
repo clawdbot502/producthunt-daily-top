@@ -23,19 +23,23 @@ def create_doc(token: str, title: str) -> str:
     return doc_id
 
 
+def _text_element(content: str) -> Dict[str, Any]:
+    return {"type": "text_run", "text_run": {"content": content}}
+
+
 def _block_heading(level: int, text: str) -> Dict[str, Any]:
     key = f"heading{level}"
     block_type = 2 + level  # heading1 -> 3, heading2 -> 4, heading3 -> 5
     return {
         "block_type": block_type,
-        key: {"elements": [{"text_run": {"content": text}}]},
+        key: {"elements": [_text_element(text)]},
     }
 
 
 def _block_text(text: str) -> Dict[str, Any]:
     return {
         "block_type": 2,
-        "text": {"elements": [{"text_run": {"content": text}}]},
+        "text": {"elements": [_text_element(text)]},
     }
 
 
@@ -43,7 +47,7 @@ def _block_bullet(text: str) -> Dict[str, Any]:
     return {
         "block_type": 12,
         "bullet": {
-            "elements": [{"text_run": {"content": text}}],
+            "elements": [_text_element(text)],
             "style": {"bullet_eq_indent_level": 0},
         },
     }
@@ -71,7 +75,11 @@ def append_blocks(token: str, document_id: str, blocks: List[Dict[str, Any]]) ->
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     payload = {"children": blocks, "index": -1}
     resp = requests.post(url, headers=headers, json=payload, timeout=60)
-    resp.raise_for_status()
+    try:
+        resp.raise_for_status()
+    except requests.HTTPError as exc:
+        logger.error("Doc append HTTP error: %s - body: %s", exc, resp.text)
+        raise
     data = resp.json()
     if data.get("code", -1) != 0:
         raise RuntimeError(f"Feishu doc append failed: {data}")
