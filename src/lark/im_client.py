@@ -28,9 +28,12 @@ def _build_card(top3: List[Product], date_str: str, doc_url: str) -> dict:
                 "text": {
                     "tag": "lark_md",
                     "content": (
-                        f"**#{p.rank} {p.name}**\n"
-                        f"{p.tagline}\n"
-                        f"👍 {p.votes}  💬 {p.comments}  🏷️ {', '.join(p.topics)}\n"
+                        f"**#{p.rank} {p.name}**
+"
+                        f"{p.tagline}
+"
+                        f"👍 {p.votes}  💬 {p.comments}  🏷️ {', '.join(p.topics)}
+"
                         f"🤖 {p.ai_summary}"
                     ),
                 },
@@ -83,7 +86,7 @@ def send_card(token: str, chat_id: str, top3: List[Product], date_str: str, doc_
     payload = {
         "receive_id": chat_id,
         "msg_type": "interactive",
-        "content": json.dumps({"card": card}),
+        "content": json.dumps(card),
     }
     resp = requests.post(url, headers=headers, json=payload, timeout=30)
     try:
