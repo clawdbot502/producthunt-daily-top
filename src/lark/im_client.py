@@ -8,7 +8,7 @@ import requests
 from src.models import Product
 
 logger = logging.getLogger(__name__)
-IM_URL = "https://open.feishu.cn/open-apis/im/v1/messages"
+IM_URL = "https://open.larksuite.com/open-apis/im/v1/messages"
 
 
 def _build_card(top3: List[Product], date_str: str, doc_url: str) -> dict:

@@ -6,7 +6,7 @@ import requests
 from src.models import Product
 
 logger = logging.getLogger(__name__)
-DOCX_API = "https://open.feishu.cn/open-apis/docx/v1/documents"
+DOCX_API = "https://open.larksuite.com/open-apis/docx/v1/documents"
 
 
 def create_doc(token: str, title: str) -> str:
@@ -73,14 +73,18 @@ def build_blocks(products: List[Product], date_str: str) -> List[Dict[str, Any]]
 def append_blocks(token: str, document_id: str, blocks: List[Dict[str, Any]]) -> None:
     url = f"{DOCX_API}/{document_id}/blocks/{document_id}/children"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    payload = {"children": blocks, "index": -1}
-    resp = requests.post(url, headers=headers, json=payload, timeout=60)
-    try:
-        resp.raise_for_status()
-    except requests.HTTPError as exc:
-        logger.error("Doc append HTTP error: %s - body: %s", exc, resp.text)
-        raise
-    data = resp.json()
-    if data.get("code", -1) != 0:
-        raise RuntimeError(f"Feishu doc append failed: {data}")
-    logger.info("Appended %s blocks to doc %s", len(blocks), document_id)
+    # Feishu docx children max len is 50 per request
+    batch_size = 50
+    for i in range(0, len(blocks), batch_size):
+        chunk = blocks[i : i + batch_size]
+        payload = {"children": chunk, "index": -1}
+        resp = requests.post(url, headers=headers, json=payload, timeout=60)
+        try:
+            resp.raise_for_status()
+        except requests.HTTPError as exc:
+            logger.error("Doc append HTTP error: %s - body: %s", exc, resp.text)
+            raise
+        data = resp.json()
+        if data.get("code", -1) != 0:
+            raise RuntimeError(f"Feishu doc append failed: {data}")
+        logger.info("Appended batch %s (%s blocks) to doc %s", i // batch_size + 1, len(chunk), document_id)

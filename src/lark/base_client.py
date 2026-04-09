@@ -6,7 +6,7 @@ import requests
 from src.models import Product
 
 logger = logging.getLogger(__name__)
-BASE_URL = "https://open.feishu.cn/open-apis/bitable/v1/apps"
+BASE_URL = "https://open.larksuite.com/open-apis/bitable/v1/apps"
 
 
 def _product_to_record(product: Product, date_ms: int) -> Dict[str, Any]:
