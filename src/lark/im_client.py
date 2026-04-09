@@ -1,3 +1,4 @@
+import base64
 import json
 import logging
 from typing import List
@@ -80,13 +81,18 @@ def send_card(token: str, chat_id: str, top3: List[Product], date_str: str, doc_
     url = f"{IM_URL}?receive_id_type=chat_id"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     card = _build_card(top3, date_str, doc_url)
+    receive_id = base64.b64encode(chat_id.encode("utf-8")).decode("utf-8")
     payload = {
-        "receive_id": chat_id,
+        "receive_id": receive_id,
         "msg_type": "interactive",
         "content": json.dumps({"card": card}),
     }
     resp = requests.post(url, headers=headers, json=payload, timeout=30)
-    resp.raise_for_status()
+    try:
+        resp.raise_for_status()
+    except requests.HTTPError as exc:
+        logger.error("IM send HTTP error: %s - body: %s", exc, resp.text)
+        raise
     data = resp.json()
     if data.get("code", -1) != 0:
         raise RuntimeError(f"Feishu IM send failed: {data}")
