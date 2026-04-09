@@ -17,6 +17,13 @@ class Config(BaseSettings):
 
     def __init__(self, **kwargs):
         raw_fallback = os.environ.get("SUMMARY_FALLBACK_MODELS", "")
-        if raw_fallback and not kwargs.get("summary_fallback_models"):
-            kwargs["summary_fallback_models"] = [m.strip() for m in raw_fallback.split(",") if m.strip()]
+        if not kwargs.get("summary_fallback_models"):
+            if raw_fallback.strip():
+                kwargs["summary_fallback_models"] = [
+                    m.strip() for m in raw_fallback.split(",") if m.strip()
+                ]
+            else:
+                kwargs["summary_fallback_models"] = []
+            # Prevent BaseSettings from re-reading the raw env var and doing json.loads on it.
+            os.environ.pop("SUMMARY_FALLBACK_MODELS", None)
         super().__init__(**kwargs)
