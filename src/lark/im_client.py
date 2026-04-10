@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 IM_URL = "https://open.larksuite.com/open-apis/im/v1/messages"
 
 
-def _build_card(top3: List[Product], date_str: str) -> dict:
+def _build_card(products: List[Product], date_str: str) -> dict:
     elements = [
         {
             "tag": "div",
@@ -21,16 +21,19 @@ def _build_card(top3: List[Product], date_str: str) -> dict:
         },
         {"tag": "hr"},
     ]
-    for p in top3:
+    for p in products:
         elements.append(
             {
                 "tag": "div",
                 "text": {
                     "tag": "lark_md",
                     "content": (
-                        f"**#{p.rank} {p.name}**\n"
-                        f"{p.tagline}\n"
-                        f"👍 {p.votes}  💬 {p.comments}  🏷️ {', '.join(p.topics)}\n"
+                        f"**#{p.rank} {p.name}**
+"
+                        f"{p.tagline}
+"
+                        f"👍 {p.votes}  💬 {p.comments}  🏷️ {', '.join(p.topics)}
+"
                         f"🤖 {p.ai_summary}"
                     ),
                 },
@@ -61,10 +64,10 @@ def _build_card(top3: List[Product], date_str: str) -> dict:
     }
 
 
-def send_card(token: str, chat_id: str, top3: List[Product], date_str: str, doc_url: str) -> None:
+def send_card(token: str, chat_id: str, products: List[Product], date_str: str) -> None:
     url = f"{IM_URL}?receive_id_type=chat_id"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    card = _build_card(top3, date_str)
+    card = _build_card(products, date_str)
     payload = {
         "receive_id": chat_id,
         "msg_type": "interactive",
