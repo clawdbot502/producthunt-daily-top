@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 IM_URL = "https://open.larksuite.com/open-apis/im/v1/messages"
 
 
-def _build_card(top3: List[Product], date_str: str, doc_url: str) -> dict:
+def _build_card(top3: List[Product], date_str: str) -> dict:
     elements = [
         {
             "tag": "div",
@@ -51,21 +51,6 @@ def _build_card(top3: List[Product], date_str: str, doc_url: str) -> dict:
         )
         elements.append({"tag": "hr"})
 
-    if doc_url:
-        elements.append(
-            {
-                "tag": "action",
-                "actions": [
-                    {
-                        "tag": "button",
-                        "text": {"tag": "plain_text", "content": "📄 查看完整报告"},
-                        "url": doc_url,
-                        "type": "default",
-                    }
-                ],
-            }
-        )
-
     return {
         "config": {"wide_screen_mode": True},
         "header": {
@@ -79,7 +64,7 @@ def _build_card(top3: List[Product], date_str: str, doc_url: str) -> dict:
 def send_card(token: str, chat_id: str, top3: List[Product], date_str: str, doc_url: str) -> None:
     url = f"{IM_URL}?receive_id_type=chat_id"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    card = _build_card(top3, date_str, doc_url)
+    card = _build_card(top3, date_str)
     payload = {
         "receive_id": chat_id,
         "msg_type": "interactive",
