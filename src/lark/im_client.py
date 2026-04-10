@@ -28,12 +28,9 @@ def _build_card(products: List[Product], date_str: str) -> dict:
                 "text": {
                     "tag": "lark_md",
                     "content": (
-                        f"**#{p.rank} {p.name}**
-"
-                        f"{p.tagline}
-"
-                        f"👍 {p.votes}  💬 {p.comments}  🏷️ {', '.join(p.topics)}
-"
+                        f"**#{p.rank} {p.name}**\n"
+                        f"{p.tagline}\n"
+                        f"👍 {p.votes}  💬 {p.comments}  🏷️ {', '.join(p.topics)}\n"
                         f"🤖 {p.ai_summary}"
                     ),
                 },
