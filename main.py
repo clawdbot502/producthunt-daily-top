@@ -77,7 +77,7 @@ def main() -> None:
     # 6. Group message
     try:
         doc_url = f"https://open.feishu.cn/docx/{doc_id}" if doc_id else ""
-        send_card(token, config.lark_chat_id, products[:3], products[0].ph_date, doc_url)
+        send_card(token, config.lark_chat_id, products, products[0].ph_date, doc_url)
     except Exception as exc:
         logger.error("Group message failed: %s", exc)
 
