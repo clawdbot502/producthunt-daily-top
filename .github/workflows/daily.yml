@@ -2,7 +2,7 @@ name: Product Hunt Daily Top
 
 on:
   schedule:
-    - cron: '37 9 * * *'
+    - cron: '37 7 * * *'
   workflow_dispatch:
 
 jobs:
